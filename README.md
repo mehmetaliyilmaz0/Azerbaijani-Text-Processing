@@ -2,11 +2,6 @@
 
 This project implements a robust, domain-aware text preprocessing pipeline for Azerbaijani. It processes, cleans, and standardizes five sentiment-annotated datasets. Finally, it trains and evaluates Word2Vec and FastText embedding models on the cleaned corpus.
 
-**Members:**
-* `Mehmet Ali Yılmaz`
-* `Cemilhan Sağlam`
-* `Muhammed Esat Çelebi`
-
 
 ---
 
@@ -38,7 +33,7 @@ A single processing function (`normalize_text_az`) applies these rules sequentia
 
 ## 3. Mini Challenges Implemented
 
-Several "mini-challenges" from the assignment brief were implemented to enhance the pipeline's robustness.
+Several "mini-challenges" were implemented to enhance the pipeline's robustness.
 
 * **Negation Handling:** The pipeline marks the scope of negation. After encountering a negator (e.g., `yox`, `deyil`), the next three tokens are appended with a `_NEG` suffix (e.g., `yaxşı` becomes `yaxşı_NEG`). This helps the model learn that `yaxşı` and `yaxşı_NEG` are semantically opposite.
 * **Emoji Mapping:** A small dictionary maps common positive/negative emojis to `<EMO_POS>` and `<EMO_NEG>` tokens (e.g., `😊` → `<EMO_POS>`, `😞` → `<EMO_NEG>`).
@@ -102,7 +97,7 @@ The qualitative analysis of nearest neighbors revealed the most significant diff
 
 The project is divided into three distinct, runnable scripts.
 
-1.  **`process_assignment.py`**: Reads the raw Excel files from the root directory, performs all cleaning and domain-aware normalization, and saves the 5 output files to `cleaned_data/` and the main `corpus_all.txt`.
+1.  **`process_data.py`**: Reads the raw Excel files from the root directory, performs all cleaning and domain-aware normalization, and saves the 5 output files to `cleaned_data/` and the main `corpus_all.txt`.
 2.  **`train_embeddings.py`**: Reads the 5 Excel files from `cleaned_data/`, trains the Word2Vec and FastText models, and saves the final models to the `embeddings/` directory.
 3.  **`evaluate_embeddings.py`**: Loads the trained models from `embeddings/` and runs the quantitative and qualitative analyses, printing the results to the console.
 
@@ -111,7 +106,7 @@ The project is divided into three distinct, runnable scripts.
 2.  Place the 5 raw dataset `.xlsx` files in the repository's root folder.
 3.  Run the scripts in sequence:
     ```bash
-    python process_assignment.py
+    python process_data.py
     python train_embeddings.py
     python evaluate_embeddings.py
     ```

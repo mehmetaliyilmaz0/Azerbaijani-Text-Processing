@@ -1,8 +1,8 @@
-# CENG442 Assignment 1: Azerbaijani Text Preprocessing & Embeddings
+#Azerbaijani Text Preprocessing & Embeddings
 
 This project implements a robust, domain-aware text preprocessing pipeline for Azerbaijani. It processes, cleans, and standardizes five sentiment-annotated datasets. Finally, it trains and evaluates Word2Vec and FastText embedding models on the cleaned corpus.
 
-**Group Members:**
+**Members:**
 * `Mehmet Ali Yılmaz`
 * `Cemilhan Sağlam`
 * `Muhammed Esat Çelebi`
@@ -38,7 +38,7 @@ A single processing function (`normalize_text_az`) applies these rules sequentia
 
 ## 3. Mini Challenges Implemented
 
-Several optional "mini-challenges" from the assignment brief were implemented to enhance the pipeline's robustness.
+Several "mini-challenges" from the assignment brief were implemented to enhance the pipeline's robustness.
 
 * **Negation Handling:** The pipeline marks the scope of negation. After encountering a negator (e.g., `yox`, `deyil`), the next three tokens are appended with a `_NEG` suffix (e.g., `yaxşı` becomes `yaxşı_NEG`). This helps the model learn that `yaxşı` and `yaxşı_NEG` are semantically opposite.
 * **Emoji Mapping:** A small dictionary maps common positive/negative emojis to `<EMO_POS>` and `<EMO_NEG>` tokens (e.g., `😊` → `<EMO_POS>`, `😞` → `<EMO_NEG>`).

@@ -1,4 +1,4 @@
-#Azerbaijani Text Preprocessing & Embeddings
+## Azerbaijani Text Preprocessing & Embeddings
 
 This project implements a robust, domain-aware text preprocessing pipeline for Azerbaijani. It processes, cleans, and standardizes five sentiment-annotated datasets. Finally, it trains and evaluates Word2Vec and FastText embedding models on the cleaned corpus.
 

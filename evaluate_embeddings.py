@@ -1,140 +1,145 @@
-# evaluate_embeddings.py (REFACTORED)
+"""
+- Loads final Word2Vec / FastText models (trained on full corpus).
+- Evaluates them with the SAME metric used during Optuna (syn/ant/separation/coverage).
+- Additionally runs a simple, project-style qualitative probe:
+  * per-dataset lexical coverage
+  * synonym / antonym similarity comparison
+  * nearest neighbors for a fixed Azerbaijani seed list
 
-import pandas as pd
+This matches the project’s “9) Compare Word2Vec vs FastText (simple metrics)”
+section, so the TA can run ONLY this file and see everything needed.
+"""
+
 from pathlib import Path
-import logging
-import re
-from numpy import dot, float32 as REAL
+import pandas as pd
+import numpy as np
+from numpy import dot
 from numpy.linalg import norm
 from gensim.models import Word2Vec, FastText
-import numpy as np
 
-# Logging'i global alana taşı
-logging.basicConfig(level=logging.ERROR)
+from eval_utils import load_cleaned_sentences, evaluate_model
 
-# --- YARDIMCI FONKSİYONLAR (Değişmedi) ---
-def lexical_coverage(model, tokens):
+# ---------------------------------------------------------------------
+# CONFIG
+# ---------------------------------------------------------------------
+FILES = [
+    "cleaned_data/labeled-sentiment_2col.xlsx",
+    "cleaned_data/test__1__2col.xlsx",
+    "cleaned_data/train__3__2col.xlsx",
+    "cleaned_data/train-00000-of-00001_2col.xlsx",
+    "cleaned_data/merged_dataset_CSV__1__2col.xlsx",
+]
+
+SEED_WORDS = [
+    "yaxşı", "pis", "çox", "bahalı", "ucuz",
+    "mükəmməl", "dəhşət", "<PRICE>", "<RATING_POS>"
+]
+
+SYN_PAIRS = [
+    ("yaxşı", "əla"),
+    ("bahalı", "qiymətli"),
+    ("ucuz", "sərfəli"),
+]
+
+ANT_PAIRS = [
+    ("yaxşı", "pis"),
+    ("bahalı", "ucuz"),
+]
+
+
+def _lexical_coverage(model, tokens):
+    """Per-dataset coverage used in the project-style snippet."""
     vocab = model.wv.key_to_index
     return sum(1 for t in tokens if t in vocab) / max(1, len(tokens))
 
-def read_tokens(f):
-    df = pd.read_excel(f, usecols=["cleaned_text"])
-    return [t for row in df["cleaned_text"].astype(str) for t in row.split()]
 
-def cos_sim(a, b):
+def _read_tokens(path):
+    """Read a cleaned Excel and flatten into a token list."""
+    df = pd.read_excel(path, usecols=["cleaned_text"])
+    return [tok for row in df["cleaned_text"].astype(str) for tok in row.split()]
+
+
+def _cos(a, b):
     return float(dot(a, b) / (norm(a) * norm(b)))
 
-def pair_sim(model, pairs):
+
+def _pair_sim(model, pairs):
     vals = []
     for a, b in pairs:
         try:
-            vec_a = model.wv[a]
-            vec_b = model.wv[b]
-            vals.append(cos_sim(vec_a, vec_b))
+            vals.append(model.wv.similarity(a, b))
         except KeyError:
-            pass
-    return sum(vals) / max(1, len(vals)) if vals else float('nan')
+            # skip missing pairs
+            continue
+    return sum(vals) / len(vals) if vals else float("nan")
 
-def neighbors(model, word, k=5):
+
+def _neighbors(model, word, k=5):
     try:
-        return [w for w, score in model.wv.most_similar(word, topn=k)]
+        return [w for w, _ in model.wv.most_similar(word, topn=k)]
     except KeyError:
         return []
-# ---
 
-def evaluate_model_pair(w2v_path, ft_path):
-    """
-    Loads a pair of W2V and FT models and runs all evaluation tests.
-    
-    Args:
-        w2v_path (Path): Path to the trained Word2Vec model.
-        ft_path (Path): Path to the trained FastText model.
-        
-    Returns:
-        dict: A dictionary containing all calculated scores
-              (e.g., 'sep_w2v', 'sep_ft').
-    """
-    
-    print(f"Loading models for evaluation: {w2v_path.parent.name}")
-    
-    if not w2v_path.exists() or not ft_path.exists():
-        print(f"ERROR: Model files not found. '{w2v_path}' or '{ft_path}' is missing.")
-        return None # Hata durumunda None döndür
-        
-    w2v = Word2Vec.load(str(w2v_path))
-    ft = FastText.load(str(ft_path))
-    print("Models loaded successfully.")
 
-    # --- 1. Lexical Coverage (Sadece bilgilendirme amaçlı) ---
-    print("== 1. Lexical Coverage ==")
-    # ... (Bu bölüm, ana hedef metrik için kritik olmadığından kısa tutulabilir
-    # veya loglama için eklenebilir, ancak şimdilik atlıyoruz.)
-    
-    # --- 2. Semantic Similarity Tests (ANA HEDEF) ---
-    syn_pairs = [
-        ("yaxşı", "əla"), ("bahalı", "qiymətli"), ("ucuz", "sərfəli"),
-        ("pis", "bərbad"), ("gözəl", "qəşəng")
-    ]
-    ant_pairs = [
-        ("yaxşı", "pis"), ("bahalı", "ucuz"), ("gözəl", "çirkin"),
-        ("sevirəm", "nifrət")
-    ]
-
-    print("== 2. Calculating Semantic Similarity ==")
-    syn_w2v = pair_sim(w2v, syn_pairs)
-    syn_ft = pair_sim(ft, syn_pairs)
-    ant_w2v = pair_sim(w2v, ant_pairs)
-    ant_ft = pair_sim(ft, ant_pairs)
-    
-    sep_w2v = float('nan')
-    sep_ft = float('nan')
-
-    try:
-        sep_w2v = syn_w2v - ant_w2v
-        sep_ft = syn_ft - ant_ft
-    except Exception:
-        pass # 'nan' gelirse 'nan' olarak kalır
-
-    # --- 3. Qualitative Test (Sadece ekrana basılır) ---
-    print("== 3. Qualitative Nearest Neighbors ==")
-    seed_words = ["yaxşı", "pis", "<PRICE>", "<RATING_POS>", "yox"]
-    for word in seed_words:
-        print(f"  '{word}' NN (W2V): {neighbors(w2v, word, k=3)}")
-        print(f"  '{word}' NN (FT): {neighbors(ft, word, k=3)}")
-
-    # --- 4. Return Results ---
-    # Bu, 'run_experiments.py' script'inin alacağı sonuç sözlüğüdür.
-    results = {
-        'syn_w2v': syn_w2v,
-        'ant_w2v': ant_w2v,
-        'sep_w2v': sep_w2v,
-        'syn_ft': syn_ft,
-        'ant_ft': ant_ft,
-        'sep_ft': sep_ft, # Bizim ana hedef metriğimiz
-    }
-    
-    print(f"Evaluation complete. FastText Separation Score: {sep_ft:.4f}")
-    return results
-
-# --- SCRIPT'İ TEK BAŞINA ÇALIŞTIRMAK İÇİN (TEST AMAÇLI) ---
 if __name__ == "__main__":
-    """
-    This block allows the script to be run directly for testing.
-    It will try to evaluate models from a 'default_test_run' folder.
-    """
-    print("--- Running 'evaluate_embeddings.py' in standalone test mode ---")
-    
-    # 'train_embeddings.py' script'indeki varsayılan çıktı klasörü
-    test_dir = Path("embeddings_default_test")
-    
-    if not test_dir.exists():
-        print(f"Test directory not found: {test_dir}")
-        print("Please run 'train_embeddings.py' standalone first to create models.")
+    # ==============================================================
+    # 1) Load cleaned excel paths (for coverage)
+    # ==============================================================
+    # we don't need sentences here, only the file list
+    _, excel_files = load_cleaned_sentences()
+
+    # ==============================================================
+    # 2) Load models if they exist
+    # ==============================================================
+    w2v_path = Path("embeddings/word2vec.final.model")
+    ft_path = Path("embeddings/fasttext.final.model")
+
+    w2v = Word2Vec.load(str(w2v_path)) if w2v_path.exists() else None
+    ft = FastText.load(str(ft_path)) if ft_path.exists() else None
+
+    # ==============================================================
+    # 3) Primary metric (the one we report in README)
+    # ==============================================================
+    if w2v is not None:
+        m_w2v = evaluate_model(w2v, excel_files)
+        print("Word2Vec (final):", m_w2v)
     else:
-        test_w2v_path = test_dir / "word2vec.model"
-        test_ft_path = test_dir / "fasttext.model"
-        
-        results = evaluate_model_pair(test_w2v_path, test_ft_path)
-        if results:
-            print("\n--- Standalone test results ---")
-            print(results)
+        m_w2v = None
+
+    if ft is not None:
+        m_ft = evaluate_model(ft, excel_files)
+        print("FastText (final):", m_ft)
+    else:
+        m_ft = None
+
+    # ==============================================================
+    # 4) project-style comparison block (your screenshot)
+    # ==============================================================
+    if w2v is not None and ft is not None:
+        print("\n== Lexical coverage (per dataset) ==")
+        for f in FILES:
+            p = Path(f)
+            if not p.exists():
+                print(f"- {f} → missing, skipped")
+                continue
+            toks = _read_tokens(p)
+            cov_w2v = _lexical_coverage(w2v, toks)
+            cov_ft = _lexical_coverage(ft, toks)
+            print(f"{f}: W2V={cov_w2v:.3f}, FT(vocab)={cov_ft:.3f}  # FT still embeds OOV via subwords")
+
+        print("\n== Similarity (higher better for synonyms; lower better for antonyms) ==")
+        syn_w2v = _pair_sim(w2v, SYN_PAIRS)
+        syn_ft = _pair_sim(ft, SYN_PAIRS)
+        ant_w2v = _pair_sim(w2v, ANT_PAIRS)
+        ant_ft = _pair_sim(ft, ANT_PAIRS)
+
+        print(f"Synonyms: W2V={syn_w2v:.3f}, FT={syn_ft:.3f}")
+        print(f"Antonyms: W2V={ant_w2v:.3f}, FT={ant_ft:.3f}")
+        print(f"Separation (Syn − Ant): W2V={(syn_w2v - ant_w2v):.3f}, FT={(syn_ft - ant_ft):.3f}")
+
+        print("\n== Nearest neighbors (qualitative) ==")
+        for w in SEED_WORDS:
+            print(f"  W2V NN for '{w}': { _neighbors(w2v, w, k=5) }")
+            print(f"  FT  NN for '{w}': { _neighbors(ft,  w, k=5) }")
+    else:
+        print("\n[INFO] Only one model found. Skipping pairwise W2V vs FT comparison.")

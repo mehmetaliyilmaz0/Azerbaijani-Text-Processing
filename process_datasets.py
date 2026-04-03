@@ -1,6 +1,6 @@
 #DESCRIPTION:
 # This script performs the full ETL (Extract, Transform, Load) pipeline for
-# CENG442 Assignment 1. It reads five raw Azerbaijani text datasets,
+# CENG442 project 1. It reads five raw Azerbaijani text datasets,
 # cleans and standardizes them using a domain-aware pipeline,
 # and outputs two sets of deliverables:
 # 1. Five 2-column (cleaned_text, sentiment_value) Excel files.
@@ -59,7 +59,7 @@ TOKEN_RE = re.compile(
 )
 
 # --- Mini-Challenge Dictionaries ---
-# NOTE: These are part of the assignment's mini-challenges.
+# NOTE: These are part of the project's mini-challenges.
 # The lists are representative, not exhaustive.
 EMO_MAP = {  } # 5 emojis will be tagged as positive, 5 as negative
 EMO_MAP.update({e: "<EMO_POS>" for e in ["😊", "😄", "😍", "👍", "😁"]})
@@ -189,7 +189,7 @@ def normalize_text_az(s: str, numbers_to_token=True, keep_sentence_punct=False) 
         else:
             norm.append(t)
             
-    # Remove single-letter tokens (except 'o' and 'e', as per assignment)
+    # Remove single-letter tokens (except 'o' and 'e', as per project)
     norm = [t for t in norm if not (len(t) == 1 and t not in ("o", "e"))]
     
     return " ".join(norm).strip()

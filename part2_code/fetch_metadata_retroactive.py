@@ -1,5 +1,5 @@
 """
-CENG442 - NLP Assignment Part 2
+Azerbaijani Sentiment Analysis Pipeline
 Module: fetch_metadata_retroactive.py
 Description:
     This utility script is designed to retroactively fetch and recover metadata 

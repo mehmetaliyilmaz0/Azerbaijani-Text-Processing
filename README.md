@@ -30,7 +30,7 @@
 ## 🏗️ Architecture Overview
 
 ```
-Raw Datasets (Part 1)          YouTube Comments (Part 2)
+Raw Datasets (Phase 1)          YouTube Comments (Phase 2)
         │                               │
         ▼                               ▼
   ┌──────────────┐             ┌──────────────────┐
@@ -68,7 +68,7 @@ Distinguishing Azerbaijani from Turkish is uniquely hard due to ~60% lexical ove
 - **Acceptance threshold:** Score ≥ 2.0 (validated manually on 50 samples).
 
 ### 2. Multi-Source Data Fusion
-Combines 5 heterogeneous labeled datasets from Part 1 with 50,000+ unlabeled YouTube comments from Part 2 for joint embedding training. A **strict deduplication layer** (content hashing) removed 41,102 cross-dataset duplicate rows, preventing catastrophic data leakage that would have inflated test accuracy to ~99%.
+Combines 5 heterogeneous labeled datasets from Phase 1 with 50,000+ unlabeled YouTube comments from Phase 2 for joint embedding training. A **strict deduplication layer** (content hashing) removed 41,102 cross-dataset duplicate rows, preventing catastrophic data leakage that would have inflated test accuracy to ~99%.
 
 ### 3. Focal Loss for Class Imbalance
 The Neutral class is chronically underrepresented in Azerbaijani sentiment data. Rather than naïve class weighting, the pipeline uses **Focal Loss** (γ=2.0) which down-weights easy examples and focuses the model on hard-to-classify Neutral instances. Complemented by targeted text augmentation (word dropout at p=0.15).
@@ -83,14 +83,14 @@ For each of the 5 domains, a separate model is trained on the remaining 4 and ev
 ```
 nlp-ödev/
 │
-├── 📄 Part 1 — Data Processing & Embeddings
-│   ├── process_assignment.py        # ETL: 5 raw datasets → cleaned Excel + corpus.txt
+├── 📄 Phase 1 — Data Processing & Embeddings
+│   ├── process_datasets.py        # ETL: 5 raw datasets → cleaned Excel + corpus.txt
 │   ├── optuna_tune_embeddings.py    # Hyperparameter search for W2V / FastText
 │   ├── train_embeddings.py          # Final embedding training with Optuna best params
 │   ├── evaluate_embeddings.py       # Embedding quality evaluation (analogy, similarity)
 │   └── eval_utils.py                # Shared corpus loading utilities
 │
-├── 🤖 Part 2 — Modeling & Evaluation
+├── 🤖 Phase 2 — Modeling & Evaluation
 │   └── part2_code/
 │       ├── part2_modeling.py        # Main pipeline: train, evaluate, domain shift
 │       ├── part2_utils.py           # Azerbaijani language filter (is_azerbaijani)
@@ -100,8 +100,8 @@ nlp-ödev/
 │
 ├── 📊 Outputs (generated, not committed)
 │   ├── embeddings/                  # Word2Vec + FastText models (~2.8 GB)
-│   ├── cleaned_data/                # Processed Excel files from Part 1
-│   ├── part1_with_domains/          # Domain-labeled Part 1 data
+│   ├── cleaned_data/                # Processed Excel files from Phase 1
+│   ├── part1_with_domains/          # Domain-labeled Phase 1 data
 │   ├── part2_data/                  # Collected YouTube comments
 │   ├── experiment_plots/            # 16 evaluation plots (confusion matrices, F1 bars)
 │   └── best_sentiment_model.keras   # Best trained GRU model (~1.3 GB)
@@ -139,9 +139,9 @@ export YOUTUBE_API_KEY="your_key_here"
 ### Run the Full Pipeline
 
 ```bash
-# ── Part 1: Data Processing ──────────────────────────────────────────────────
+# ── Phase 1: Data Processing ──────────────────────────────────────────────────
 # Step 1: Clean raw datasets → cleaned_data/ + corpus_all.txt
-python process_assignment.py
+python process_datasets.py
 
 # Step 2: (Optional) Tune embedding hyperparameters with Optuna
 python optuna_tune_embeddings.py
@@ -152,8 +152,8 @@ python train_embeddings.py
 # Step 4: Evaluate embedding quality
 python evaluate_embeddings.py
 
-# ── Part 2: Data Collection and Modeling ─────────────────────────────────────
-# Step 5: Assign domains to Part 1 data
+# ── Phase 2: Data Collection and Modeling ─────────────────────────────────────
+# Step 5: Assign domains to Phase 1 data
 python part2_code/assign_domains.py
 
 # Step 6: (Skip if you have part2_data/) Collect YouTube comments
@@ -187,7 +187,7 @@ All plots are generated automatically and saved to `experiment_plots/`. Key visu
 
 The pipeline collects and evaluates sentiment across 5 Azerbaijani domains:
 
-| Domain | YouTube Keywords (sample) | Part 1 Source |
+| Domain | YouTube Keywords (sample) | Phase 1 Source |
 |--------|--------------------------|---------------|
 | Technology & Digital Services | `xiaomi azərbaycan`, `bakcell tarifləri` | `labeled-sentiment.xlsx` |
 | Finance & Business | `kredit faizləri`, `manat dollar məzənnəsi` | `merged_dataset_CSV__1_.xlsx` |
@@ -240,6 +240,6 @@ FT_PARAMS       = dict(sg=1, window=5, min_count=3, min_n=3, max_n=6)
 
 ## 👤 Author
 
-**Mehmet Ali Yılmaz** — Student ID: 21050111057  
-CENG442 — Natural Language Processing  
-4th Year, 1st Semester
+**** — 
+Natural Language Processing Pipeline  
+

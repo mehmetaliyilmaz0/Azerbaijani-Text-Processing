@@ -1,9 +1,9 @@
 """
-CENG442 - NLP Assignment Part 2
+Azerbaijani Sentiment Analysis Pipeline
 Module: part2_modeling.py
 Description:
     This is the core modeling pipeline for the Azerbaijani Sentiment Analysis project.
-    It integrates heterogenous data sources (Part 1 Labeled + Part 2 Unlabeled) to 
+    It integrates heterogenous data sources (Phase 1 Labeled + Phase 2 Unlabeled) to 
     train and evaluate Gated Recurrent Unit (GRU) models.
 
     Key Features:
@@ -329,12 +329,12 @@ def evaluate_model(model, X_test, y_test, title=""):
 # =================================================================
 def map_sentiment_part1(v):
     """
-    Standardizes Part 1 labels to Part 2 scheme:
+    Standardizes Phase 1 labels to Phase 2 scheme:
     Target: 0=Negative, 1=Neutral, 2=Positive
     
     IMPORTANT MAPPING LOGIC:
     ========================
-    Part 1 datasets use inconsistent label schemes:
+    Phase 1 datasets use inconsistent label schemes:
     - Some use strings: "pos", "neg", "neu"
     - Some use integers: 0, 1, 2 (where meaning varies!)
     
@@ -414,7 +414,7 @@ def main():
             print(f"Error loading {fname}: {e}")
 
     # --- CRITICAL: DATA DEDUPLICATION LAYER ---
-    # Part 1 datasets (specifically merged_dataset vs others) contain significant overlaps.
+    # Phase 1 datasets (specifically merged_dataset vs others) contain significant overlaps.
     # Without this step, Train/Test sets would share identical samples (Data Leakage),
     # leading to artificial 99% accuracy scores. Strict distinctness is enforced.
     if all_texts:
@@ -480,7 +480,7 @@ def main():
 
 
     # --- LOAD YOUTUBE DATA (UNLABELED) ---
-    print("Loading YouTube comments (Part 2) for Embedding Enhancement...")
+    print("Loading YouTube comments (Phase 2) for Embedding Enhancement...")
     yt_texts = []
     yt_domains = [] # For analysis later
     part2_root = "part2_data"

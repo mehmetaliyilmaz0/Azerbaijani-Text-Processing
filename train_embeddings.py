@@ -1,7 +1,7 @@
 """
 - This script is the "final training" stage of the pipeline.
 - At this point, data should ALREADY be cleaned and materialized into
-  `cleaned_data/*.xlsx` by `process_assignment.py`.
+  `cleaned_data/*.xlsx` by `process_datasets.py`.
 - Hyperparameters should ALREADY be explored and written to
   `embeddings/w2v_best.json` and `embeddings/ft_best.json` by
   `optuna_tune_embeddings.py`.

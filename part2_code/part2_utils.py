@@ -1,5 +1,5 @@
 """
-CENG442 - NLP Assignment Part 2
+Azerbaijani Sentiment Analysis Pipeline
 Module: part2_utils.py
 Description: 
     This module implements a specialized language filtering logic to distinguish 
@@ -17,7 +17,7 @@ import re
 # DOMAIN CONFIGURATION
 # =================================================================
 # These domains form the structural backbone of the dataset.
-# Mapped verbatim from the assignment requirements to ensure compliance.
+# Mapped verbatim from the project requirements to ensure compliance.
 DOMAINS = [
     "Technology & Digital Services",
     "Finance & Business",

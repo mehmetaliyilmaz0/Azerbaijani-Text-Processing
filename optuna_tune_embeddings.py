@@ -9,12 +9,12 @@
 
 - Important constraint:
   This is NOT a full AutoML pipeline. We deliberately keep the search space small,
-  reproducible, and understandable so that it fits a course assignment and can be
+  reproducible, and understandable so that it fits a course project and can be
   inspected by the grader.
 
 Prerequisites:
 - `eval_utils.py` must define: load_cleaned_sentences(...), evaluate_model(...)
-- `cleaned_data/*.xlsx` must already exist (i.e. `process_assignment.py` must have run)
+- `cleaned_data/*.xlsx` must already exist (i.e. `process_datasets.py` must have run)
 """
 
 from pathlib import Path

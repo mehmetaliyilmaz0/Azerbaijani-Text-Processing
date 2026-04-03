@@ -1,8 +1,8 @@
 """
-CENG442 - NLP Assignment Part 2
+Azerbaijani Sentiment Analysis Pipeline
 Module: assign_domains.py
 Description:
-    This script assigns domain labels to Part 1 data (which lacks domain information)
+    This script assigns domain labels to Phase 1 data (which lacks domain information)
     using keyword-based classification. It analyzes the text content and matches
     against domain-specific keywords to determine the most likely domain.
 """
@@ -70,7 +70,7 @@ def classify_domain(text):
     return scores.most_common(1)[0][0]
 
 def process_file(filepath, output_dir):
-    """Process a single Part 1 file and add domain column."""
+    """Process a single Phase 1 file and add domain column."""
     filename = os.path.basename(filepath)
     print(f"\nProcessing: {filename}")
     
@@ -108,7 +108,7 @@ def process_file(filepath, output_dir):
     return df
 
 def main():
-    # Part 1 files to process
+    # Phase 1 files to process
     part1_files = [
         "train__3_.xlsx",
         "test__1_.xlsx", 

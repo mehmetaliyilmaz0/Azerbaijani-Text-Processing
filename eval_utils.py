@@ -1,8 +1,8 @@
 """
 - Provide a SINGLE source of truth for:
-    1. loading the cleaned Azerbaijani sentences produced by process_assignment.py
+    1. loading the cleaned Azerbaijani sentences produced by process_datasets.py
     2. computing semantic-quality metrics (synonym vs. antonym similarity)
-    3. computing lexical coverage on the assignment’s 5 cleaned Excel files
+    3. computing lexical coverage on the project’s 5 cleaned Excel files
 
 Why this matters:
 - Both the tuning script (optuna_tune_embeddings.py) and the final evaluation
@@ -20,7 +20,7 @@ from numpy.linalg import norm
 # ---------------------------------------------------------------------------
 # 1) DEFAULT INPUTS
 # ---------------------------------------------------------------------------
-# We explicitly list the 5 cleaned Excel files that process_assignment.py
+# We explicitly list the 5 cleaned Excel files that process_datasets.py
 # is supposed to generate. If one of them is missing, we will simply skip it.
 # This makes the code slightly more robust in classroom environments.
 DEFAULT_FILES = [
@@ -109,9 +109,9 @@ def load_cleaned_sentences(files=None, limit=None):
         all_sents = all_sents[:limit]
 
     if not all_sents:
-        # This is a hard error on purpose → signals that process_assignment.py
+        # This is a hard error on purpose → signals that process_datasets.py
         # was not run or output paths are wrong.
-        raise RuntimeError("No sentences found. Run process_assignment.py first.")
+        raise RuntimeError("No sentences found. Run process_datasets.py first.")
 
     return all_sents, excel_paths
 
@@ -154,7 +154,7 @@ def pair_sim(model, pairs):
 # ---------------------------------------------------------------------------
 def lexical_coverage(model, excel_files):
     """
-    Measure how much of the ACTUAL assignment data is covered by the model.
+    Measure how much of the ACTUAL project data is covered by the model.
 
     Definition:
         coverage = (#tokens that are in model vocabulary) / (total #tokens)

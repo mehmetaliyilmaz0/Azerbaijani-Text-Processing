@@ -1,12 +1,12 @@
 """
 - Loads final Word2Vec / FastText models (trained on full corpus).
 - Evaluates them with the SAME metric used during Optuna (syn/ant/separation/coverage).
-- Additionally runs a simple, assignment-style qualitative probe:
+- Additionally runs a simple, project-style qualitative probe:
   * per-dataset lexical coverage
   * synonym / antonym similarity comparison
   * nearest neighbors for a fixed Azerbaijani seed list
 
-This matches the assignment’s “9) Compare Word2Vec vs FastText (simple metrics)”
+This matches the project’s “9) Compare Word2Vec vs FastText (simple metrics)”
 section, so the TA can run ONLY this file and see everything needed.
 """
 
@@ -48,7 +48,7 @@ ANT_PAIRS = [
 
 
 def _lexical_coverage(model, tokens):
-    """Per-dataset coverage used in the assignment-style snippet."""
+    """Per-dataset coverage used in the project-style snippet."""
     vocab = model.wv.key_to_index
     return sum(1 for t in tokens if t in vocab) / max(1, len(tokens))
 
@@ -113,7 +113,7 @@ if __name__ == "__main__":
         m_ft = None
 
     # ==============================================================
-    # 4) Assignment-style comparison block (your screenshot)
+    # 4) project-style comparison block (your screenshot)
     # ==============================================================
     if w2v is not None and ft is not None:
         print("\n== Lexical coverage (per dataset) ==")

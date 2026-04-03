@@ -1,6 +1,6 @@
-# CENG442 - NLP Assignment (Part-2) Final Report: Azerbaijani Sentiment Analysis
+# Azerbaijani Sentiment Analysis (Part-2) Final Report: Azerbaijani Sentiment Analysis
 
-# Mehmet Ali Yılmaz - 21050111057
+#  - 
 
 ## 1. Project Overview & Objective
 
@@ -12,7 +12,7 @@ The primary objective of this project is to construct a production-ready sentime
 
 ### 1) Which Part-1 labeled datasets did you use and how did you load the merged version?
 
-I utilized a diverse ensemble of 5 labeled datasets sourced from Part 1 of the assignment: `labeled-sentiment.xlsx`, `test__1_.xlsx`, `train__3_.xlsx`, `train-00000-of-00001.xlsx`, and `merged_dataset_CSV__1_.xlsx`. The integration of these datasets was not trivial due to heterogeneity in their structural schema.
+I utilized a diverse ensemble of 5 labeled datasets sourced from Phase 1 of the project: `labeled-sentiment.xlsx`, `test__1_.xlsx`, `train__3_.xlsx`, `train-00000-of-00001.xlsx`, and `merged_dataset_CSV__1_.xlsx`. The integration of these datasets was not trivial due to heterogeneity in their structural schema.
 
 **Technical Implementation & Loading Strategy:**
 My loading pipeline, implemented in `part2_modeling.py`, employed a dynamic `map_sentiment_part1` function to standardize the disparate label formats. The source files contained a mix of string labels ("pos", "neg", "neutral", "müsbət") and integer labels (0, 1, 2) where the semantic meaning of integers varied across files (e.g., 2 representing Neutral in one file but Positive in another). I unified these into a consistent **0 (Negative), 1 (Neutral), 2 (Positive)** schema.
@@ -22,7 +22,7 @@ Crucially, I implemented a **strict deduplication layer** based on text content 
 
 ### 2) How did you map Part-1 sources into the 5 domains?
 
-Since the provided Part-1 datasets did not uniformly contain a "domain" metadata field, I performed a **Content-Type Reconstruction** to map specific source files to the assignment's five mandatory domains. This mapping was essential to enable the Domain-Wise Evaluation required in Section 10.
+Since the provided Part-1 datasets did not uniformly contain a "domain" metadata field, I performed a **Content-Type Reconstruction** to map specific source files to the project's five mandatory domains. This mapping was essential to enable the Domain-Wise Evaluation required in Section 10.
 
 **The Mapping Logic:**
 
@@ -30,7 +30,7 @@ Since the provided Part-1 datasets did not uniformly contain a "domain" metadata
 2. **Retail & Lifestyle**: This domain was populated using `train-00000-of-00001.xlsx`. This dataset contained a significant volume of e-commerce reviews (clothing, household items), fitting the retail criteria perfectly.
 3. **Technology & Digital Services**: I assigned `labeled-sentiment.xlsx` to this category. The comments here were predominantly focused on mobile applications, phone reviews, and software feedback.
 4. **Social Life & Entertainment**: This was derived from the conversational and general-purpose segments of `merged_dataset_CSV__1_.xlsx` which contained informal discussions, movie comments, and daily life chatter.
-5. **Finance & Business**: This domain was heavily underrepresented in the Part-1 data. To address this imbalance, I relied more heavily on the domain-specific data collection in Part 2 and the stratification of the available limited financial comments from the merged set.
+5. **Finance & Business**: This domain was heavily underrepresented in the Part-1 data. To address this imbalance, I relied more heavily on the domain-specific data collection in Phase 2 and the stratification of the available limited financial comments from the merged set.
 
 ### 3) What keywords/channels did you use per domain for YouTube discovery?
 
@@ -46,7 +46,7 @@ To ensure high-quality, domain-specific data collection, I curated a localized k
 
 ### 4) Which metadata fields did you store and where?
 
-While the assignment primarily required comment text for the Excel deliverables, I recognized that metadata is crucial for validation and potential future analysis (e.g., impact of video popularity on sentiment). Therefore, I developed a secondary script (`fetch_metadata_retroactive.py`) to extract and store a comprehensive profile for every video.
+While the project primarily required comment text for the Excel deliverables, I recognized that metadata is crucial for validation and potential future analysis (e.g., impact of video popularity on sentiment). Therefore, I developed a secondary script (`fetch_metadata_retroactive.py`) to extract and store a comprehensive profile for every video.
 
 **Stored Fields:**
 
@@ -94,7 +94,7 @@ I constructed a **300-dimensional** embedding matrix to bridge the gap between t
 
 **Theoretical Difference:**
 
-* **Frozen (`trainable=False`)**: The embedding layer acts as a static lookup table. The weights (vectors) are locked and cannot be modified by backpropagation. The model must rely entirely on the semantic relationships captured during the unsupervised training phase (Part 1).
+* **Frozen (`trainable=False`)**: The embedding layer acts as a static lookup table. The weights (vectors) are locked and cannot be modified by backpropagation. The model must rely entirely on the semantic relationships captured during the unsupervised training phase (Phase 1).
 * **Fine-tuned (`trainable=True`)**: The embedding layer is unlocked and treated as part of the model's parameters. Gradients propagate all the way back to the word vectors, allowing them to shift in the vector space to minimize the specific sentiment loss function.
 
 **Observed Results:**
@@ -240,4 +240,4 @@ flowchart TD
 
 ## 7. Conclusion
 
-This project successfully met all Part 2 requirements. The implementation of a subword-aware model (FastText) proved critical for the Azerbaijani language, eliminating the OOV problem found in Word2Vec. My GRU model achieved a robust 0.70 Macro-F1 score, and the domain analysis provided valuable insights into the linguistic diversity of Azerbaijani YouTube communities.
+This project successfully met all Phase 2 requirements. The implementation of a subword-aware model (FastText) proved critical for the Azerbaijani language, eliminating the OOV problem found in Word2Vec. My GRU model achieved a robust 0.70 Macro-F1 score, and the domain analysis provided valuable insights into the linguistic diversity of Azerbaijani YouTube communities.

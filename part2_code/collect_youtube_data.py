@@ -1,5 +1,5 @@
 """
-CENG442 - NLP Assignment Part 2
+Azerbaijani Sentiment Analysis Pipeline
 Module: collect_youtube_data.py
 Description:
     This script orchestrates the large-scale collection of YouTube comments for 
@@ -31,7 +31,7 @@ MAX_VIDEOS_TO_SEARCH = 500 # Safety cap to stop infinite loops if content is dry
 MAX_COMMENTS_PER_VIDEO = 2000 # Increased to get more data from popular videos
 MIN_CLEAN_COMMENTS = 5 # Lowered threshold to accept smaller contributions
 
-# Keywords from Assignment (Expanded for broader reach)
+# Keywords from project (Expanded for broader reach)
 DOMAIN_KEYWORDS = {
     "Technology & Digital Services": [
         "telefon qiymətləri bakı", "honor baku", "xiaomi azərbaycan", "samsung qiymətləri", "iphone 15 baku",

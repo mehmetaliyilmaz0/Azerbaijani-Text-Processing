@@ -61,6 +61,7 @@ Raw Datasets (Phase 1)          YouTube Comments (Phase 2)
 ## 🔬 Key Technical Contributions
 
 ### 1. Two-Layer Azerbaijani Language Filter
+
 Distinguishing Azerbaijani from Turkish is uniquely hard due to ~60% lexical overlap. This pipeline implements a **scored heuristic filter** with two independent signals:
 
 - **Layer A — Orthographic:** Character `ə` (schwa) carries `+4.0` weight — the single strongest AZ signal, absent from Turkish.
@@ -68,12 +69,15 @@ Distinguishing Azerbaijani from Turkish is uniquely hard due to ~60% lexical ove
 - **Acceptance threshold:** Score ≥ 2.0 (validated manually on 50 samples).
 
 ### 2. Multi-Source Data Fusion
+
 Combines 5 heterogeneous labeled datasets from Phase 1 with 50,000+ unlabeled YouTube comments from Phase 2 for joint embedding training. A **strict deduplication layer** (content hashing) removed 41,102 cross-dataset duplicate rows, preventing catastrophic data leakage that would have inflated test accuracy to ~99%.
 
 ### 3. Focal Loss for Class Imbalance
+
 The Neutral class is chronically underrepresented in Azerbaijani sentiment data. Rather than naïve class weighting, the pipeline uses **Focal Loss** (γ=2.0) which down-weights easy examples and focuses the model on hard-to-classify Neutral instances. Complemented by targeted text augmentation (word dropout at p=0.15).
 
 ### 4. Domain Shift (Leave-One-Out) Analysis
+
 For each of the 5 domains, a separate model is trained on the remaining 4 and evaluated on the held-out domain — quantifying how much domain-specific knowledge the model relies on. This is a standard evaluation protocol in production NLP systems.
 
 ---
@@ -81,7 +85,7 @@ For each of the 5 domains, a separate model is trained on the remaining 4 and ev
 ## 📁 Project Structure
 
 ```
-nlp-ödev/
+azerbaycani-nlp-pipeline/
 │
 ├── 📄 Phase 1 — Data Processing & Embeddings
 │   ├── process_datasets.py        # ETL: 5 raw datasets → cleaned Excel + corpus.txt
@@ -240,6 +244,5 @@ FT_PARAMS       = dict(sg=1, window=5, min_count=3, min_n=3, max_n=6)
 
 ## 👤 Author
 
-**** — 
+Mehmet Ali Yılmaz —
 Natural Language Processing Pipeline  
-
